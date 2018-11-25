@@ -1,6 +1,6 @@
 defmodule Queries do
     @moduledoc """
-    Documentation for Probuilds.
+    Documentation for Queries.
     """
     # This function grabs all account ids
     def allAccountId() do
@@ -17,6 +17,14 @@ defmodule Queries do
         (#{id}, '#{realName}', '#{ingame}', '#{region}', #{id})"
         {:ok, %Xandra.Void{}} = Xandra.execute(conn, statement, _params = [])
       end
+
+      # Check if match id exists
+      def checkMatchId(matchId) do
+        :matchId = matchId
+        {:ok, conn} = Helperfunction.connection()
+        prepared = Xandra.prepare!(conn, "SELECT * FROM matchHistorys WHERE id = ?")
+        {:ok, _page} = Xandra.execute(conn, prepared, [_id = matchId])
+    end
   
   end
   
