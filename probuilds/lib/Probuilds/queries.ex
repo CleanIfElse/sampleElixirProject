@@ -22,8 +22,10 @@ defmodule Queries do
       def checkMatchId(matchId) do
         :matchId = matchId
         {:ok, conn} = Helperfunction.connection()
-        prepared = Xandra.prepare!(conn, "SELECT * FROM matchHistorys WHERE id = ?")
-        {:ok, _page} = Xandra.execute(conn, prepared, [_id = matchId])
+        prepared = Xandra.prepare!(conn, "SELECT * FROM matchHistorys WHERE id = :id")
+        {:ok, _page} = Xandra.execute(conn, prepared, %{
+          id: {"int", matchId}
+        })
     end
 
     def insertMatchHistory(response) do
@@ -33,9 +35,11 @@ defmodule Queries do
         partStats = response |> Map.get("participants")
         gameId = response |> Map.get("gameId")
         for x <- 0..9 do
-          statement = "INSERT INTO testStats (id, accountid, assists, championid, deaths, gold, keystone, kills, level, name, region, items, summoners, matchId) VALUES (#{:os.system_time(:micro_seconds)}, #{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("accountId")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("assists")}, #{Enum.at(partStats, x) |> Map.get("championId")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("deaths")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("goldEarned")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("perk3Var1")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("kills")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("champLevel")}, '#{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("summonerName")}', '#{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("platformId")}', [#{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item0")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item1")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item2")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item3")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item4")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item5")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item6")}], [#{Enum.at(partStats, x) |> Map.get("spell1Id")}, #{Enum.at(partStats, x) |> Map.get("spell2Id")}], :match)"
+          statement = "INSERT INTO testStat (id, accountid, assists, championid, deaths, gold, keystone, kills, level, name, region, items, summoners, matchId) VALUES (#{:os.system_time(:micro_seconds)}, #{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("accountId")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("assists")}, #{Enum.at(partStats, x) |> Map.get("championId")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("deaths")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("goldEarned")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("perk3Var1")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("kills")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("champLevel")}, '#{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("summonerName")}', '#{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("platformId")}', [#{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item0")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item1")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item2")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item3")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item4")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item5")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item6")}], [#{Enum.at(partStats, x) |> Map.get("spell1Id")}, #{Enum.at(partStats, x) |> Map.get("spell2Id")}], :match)"
+
+
           {:ok, %Xandra.Void{}} = Xandra.execute(conn, statement, %{
-            match: {"int", gameId}
+            match: {"bigint", gameId}
           })
         end
     end
