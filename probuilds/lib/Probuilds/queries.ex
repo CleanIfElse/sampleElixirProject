@@ -12,7 +12,7 @@ defmodule Queries do
     # this function inserts account information
     def insertAccount(id, realName, ingame, region) do
         {:ok, conn} = Helperfunction.connection()
-        statement = "INSERT INTO accountinformation 
+        statement = "INSERT INTO accountinformation
         (id, rlname, ingame, region, accountid) VALUES
         (#{id}, '#{realName}', '#{ingame}', '#{region}', #{id})"
         {:ok, %Xandra.Void{}} = Xandra.execute(conn, statement, _params = [])
@@ -25,6 +25,16 @@ defmodule Queries do
         prepared = Xandra.prepare!(conn, "SELECT * FROM matchHistorys WHERE id = ?")
         {:ok, _page} = Xandra.execute(conn, prepared, [_id = matchId])
     end
-  
+
+    def insertMatchHistory(response) do
+        {:ok, response } = response
+        {:ok, conn} = Helperfunction.connection()
+        partIdentities = response |> Map.get("participantIdentities")
+        partStats = response |> Map.get("participants")
+        for x <- 0..9 do
+          statement = "INSERT INTO testStats (id, accountid, assists, championid, deaths, gold, keystone, kills, level, name, region, items, summoners, matchId) VALUES (#{:os.system_time(:micro_seconds)}, #{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("accountId")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("assists")}, #{Enum.at(partStats, x) |> Map.get("championId")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("deaths")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("goldEarned")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("perk3Var1")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("kills")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("champLevel")}, '#{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("summonerName")}', '#{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("platformId")}', [#{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item0")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item1")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item2")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item3")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item4")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item5")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item6")}], [#{Enum.at(partStats, x) |> Map.get("spell1Id")}, #{Enum.at(partStats, x) |> Map.get("spell2Id")}])"
+          {:ok, %Xandra.Void{}} = Xandra.execute(conn, statement, _params = [])
+        end
+    end
+
   end
-  

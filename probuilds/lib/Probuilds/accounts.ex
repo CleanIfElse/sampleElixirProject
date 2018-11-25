@@ -9,6 +9,6 @@ defmodule Accounts do
 
   # add into database. Only used with getUserInformation()
   def addAccount({response, region, realName}) do
-    Helperfunction.insertAccount(response |> Map.get("id"), realName, response |> Map.get("name"), region)
+    Queries.insertAccount(response |> Map.get("accountId"), realName, response |> Map.get("name"), region)
   end
 end
