@@ -17,7 +17,7 @@ defmodule Helperfunction do
     {:ok, page} = Queries.allAccountId()
     page
     |> Enum.to_list()
-    |> Enum.map(fn(x) -> x["accountid"] end) 
+    |> Enum.map(fn(x) -> x["accountid"] end)
   end
 
   # check if json is valid
@@ -33,7 +33,7 @@ defmodule Helperfunction do
   # This function will get the latest game Id
   def getLatestGameId(accountId) do
     accountId = accountId |> to_string()
-    {:ok, response} = checkValidJson("https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/#{accountId}/?api_key=RGAPI-57f2eee1-693e-42e9-b7a1-f0b34cffd1df")
+    {:ok, response} = checkValidJson("https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/#{accountId}/?api_key=RGAPI-8808378a-f94b-4a28-b470-33ad502d1b61")
     response |> Map.get("matches") |> List.first() |> Map.get("gameId")
   end
 

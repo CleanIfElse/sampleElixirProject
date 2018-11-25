@@ -28,6 +28,12 @@ defmodule Queries do
         })
     end
 
+    # def updateMatchDetails(matchId, accountId) do
+    #
+    #   response |> Map.get("frames") |> List.first()
+    #
+    # end
+
     def insertMatchHistory(response) do
         {:ok, response } = response
         {:ok, conn} = Helperfunction.connection()
@@ -36,11 +42,11 @@ defmodule Queries do
         gameId = response |> Map.get("gameId")
         for x <- 0..9 do
           statement = "INSERT INTO testStat (id, accountid, assists, championid, deaths, gold, keystone, kills, level, name, region, items, summoners, matchId) VALUES (#{:os.system_time(:micro_seconds)}, #{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("accountId")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("assists")}, #{Enum.at(partStats, x) |> Map.get("championId")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("deaths")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("goldEarned")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("perk3Var1")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("kills")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("champLevel")}, '#{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("summonerName")}', '#{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("platformId")}', [#{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item0")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item1")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item2")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item3")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item4")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item5")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item6")}], [#{Enum.at(partStats, x) |> Map.get("spell1Id")}, #{Enum.at(partStats, x) |> Map.get("spell2Id")}], :match)"
-
-
           {:ok, %Xandra.Void{}} = Xandra.execute(conn, statement, %{
             match: {"bigint", gameId}
           })
+          Matches.detailsMatchHistory(gameId, {Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("accountId")})
+
         end
     end
 

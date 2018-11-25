@@ -3,7 +3,7 @@ defmodule Accounts do
 
   def getUserInformation(region, name, realName) do
     # This checks if account name exists.
-    { :ok, response } = Helperfunction.checkValidJson("https://#{region}.api.riotgames.com/lol/summoner/v3/summoners/by-name/#{name}/?api_key=RGAPI-57f2eee1-693e-42e9-b7a1-f0b34cffd1df")
+    { :ok, response } = Helperfunction.checkValidJson("https://#{region}.api.riotgames.com/lol/summoner/v3/summoners/by-name/#{name}/?api_key=RGAPI-8808378a-f94b-4a28-b470-33ad502d1b61")
     {response, region, realName}
   end
 
