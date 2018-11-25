@@ -20,7 +20,19 @@ use Mix.Config
 #
 #     config :logger, level: :info
 #
-
+config :triton,
+  clusters: [
+    [
+      conn: Triton.Conn,
+      nodes: ["127.0.0.1"],
+      pool: Xandra.Cluster,
+      underlying_pool: DBConnection.Poolboy,
+      pool_size: 10,
+      keyspace: "probuilds",
+      health_check_delay: 2500,  # optional: (default is 5000)
+      health_check_interval: 500  # optional: (default is 1000)
+    ]
+  ]
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.

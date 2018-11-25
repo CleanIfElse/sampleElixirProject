@@ -3,34 +3,15 @@ defmodule Probuilds do
   Documentation for Probuilds.
   """
 
-  ###################################################################
-  # Insert player into the database
-  ###################################################################
-
-  def addUser() do
-    Accounts.name()
-    |>Accounts.checkDataForName()
+  # User information
+  def addUser(region, name, realName) do
+    Accounts.getUserInformation(region, name, realName)
+    |>Accounts.addAccount()
   end
 
-  ###################################################################
-  # End of Inserting players into the database 
-  ###################################################################
-
-  ###################################################################
-  # Adding match history into the database
-  ###################################################################
-
-  # All account ids(CHECK)
-  # get all recent match Id(CHECK)
-  # 
-  def recentMatches do
-    Helperfunction.getAccountIdFunction()
-    |> Recentmatches.loopToGetMatchId()
-    |> Recentmatches.loopMatchId()
+  # insert recent match history
+  def recentMatches() do
+    Helperfunction.getAccountId()
   end
-
-  ###################################################################
-  # End of match history into the database 
-  ###################################################################
 
 end

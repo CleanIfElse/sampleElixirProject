@@ -15,7 +15,7 @@ defmodule Probuilds.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      applications: [:httpotion, :logger, :xandra], 
+      applications: [:httpotion, :logger, :xandra, :httpoison], 
     ]
   end
 
@@ -28,6 +28,8 @@ defmodule Probuilds.MixProject do
       {:httpotion, "~> 3.1.0"},
       {:mariaex, "~> 0.8.2"},
       {:xandra, "~> 0.10"},
+      {:httpoison, "~> 1.4"},
+      {:triton, "~> 0.2"},
     ]
   end
 end
