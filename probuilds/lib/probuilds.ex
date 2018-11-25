@@ -12,6 +12,7 @@ defmodule Probuilds do
   # insert recent match history
   def recentMatches() do
     Helperfunction.getAccountId()
+    |> Matches.matchHistoryId()
   end
 
 end
