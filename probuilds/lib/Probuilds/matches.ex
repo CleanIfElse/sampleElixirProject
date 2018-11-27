@@ -22,15 +22,10 @@ defmodule Matches do
       { :ok, response } = Helperfunction.checkValidJson("https://na1.api.riotgames.com/lol/match/v3/timelines/by-match/#{matchId}/?api_key=")
       response
       |> Map.get("frames")
-      |> Enum.map(fn i -> skillsLevelUpDetails(i) end)
+      |> Enum.map(fn i -> skillsLevelUpDetails(i |> Map.get("events")) end)
     end
 
     defp skillsLevelUpDetails(response) do
-      resting = []
-      for rest <- response |> Map.get("events") do
-        rest
-        # Enum.map(rest, fn {key, value} -> if key == 'type' and value == 'value' do key end  end)
-          # Map.take(rest , ["type", "itemId", "participantId", "timestamp"])
-      end
+      Enum.filter(response, fn map -> map["type"] == "ITEM_PURCHASED" end)
     end
   end
