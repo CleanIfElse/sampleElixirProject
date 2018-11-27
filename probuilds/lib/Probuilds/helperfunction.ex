@@ -22,7 +22,7 @@ defmodule Helperfunction do
 
   # check if json is valid
   def checkValidJson(link) do
-    case HTTPoison.get(link) do
+    case HTTPoison.get(link <> "RGAPI-8f9bd8a0-01d5-410b-bf2a-674cf5319035") do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         { :ok, response } = Poison.decode(body)
       {:error, %HTTPoison.Error{reason: reason}} ->
@@ -33,7 +33,7 @@ defmodule Helperfunction do
   # This function will get the latest game Id
   def getLatestGameId(accountId) do
     accountId = accountId |> to_string()
-    {:ok, response} = checkValidJson("https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/#{accountId}/?api_key=RGAPI-8808378a-f94b-4a28-b470-33ad502d1b61")
+    {:ok, response} = checkValidJson("https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/#{accountId}/?api_key=")
     response |> Map.get("matches") |> List.first() |> Map.get("gameId")
   end
 

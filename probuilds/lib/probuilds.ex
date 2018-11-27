@@ -4,6 +4,7 @@ defmodule Probuilds do
   """
 
   # User information
+  # iex(42)> Probuilds.addUser('na1', 'bjergsen', 'Soren')
   def addUser(region, name, realName) do
     Accounts.getUserInformation(region, name, realName)
     |>Accounts.addAccount()
