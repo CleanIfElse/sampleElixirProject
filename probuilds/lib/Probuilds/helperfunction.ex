@@ -5,7 +5,7 @@ defmodule Helperfunction do
     {:ok, conn} = Xandra.start_link(nodes: ["127.0.0.1:9042"])
     case {:ok, conn} do
       {:ok, conn} ->
-        Xandra.execute!(conn, "USE probuildstest")
+        Xandra.execute!(conn, "USE finalprobuilds")
         {:ok, conn}
       {:error} ->
         {:error, "Something is wrong with your connection."}
