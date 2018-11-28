@@ -5,7 +5,7 @@ defmodule Helperfunction do
     {:ok, conn} = Xandra.start_link(nodes: ["127.0.0.1:9042"])
     case {:ok, conn} do
       {:ok, conn} ->
-        Xandra.execute!(conn, "USE probuilds")
+        Xandra.execute!(conn, "USE probuildstest")
         {:ok, conn}
       {:error} ->
         {:error, "Something is wrong with your connection."}
@@ -22,7 +22,7 @@ defmodule Helperfunction do
 
   # check if json is valid
   def checkValidJson(link) do
-    case HTTPoison.get(link <> "RGAPI-8f9bd8a0-01d5-410b-bf2a-674cf5319035") do
+    case HTTPoison.get(link <> "RGAPI-10019614-8880-4bf8-9bcb-87b49232a778") do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         { :ok, response } = Poison.decode(body)
       {:error, %HTTPoison.Error{reason: reason}} ->
@@ -41,7 +41,5 @@ defmodule Helperfunction do
   def insertIndiStats() do
 
   end
-
-
 
 end
