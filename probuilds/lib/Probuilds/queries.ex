@@ -13,9 +13,11 @@ defmodule Queries do
     def insertAccount(id, realName, ingame, region) do
         {:ok, conn} = Helperfunction.connection()
         statement = "INSERT INTO accountinformation
-        (id, rlname, ingame, region, accountid) VALUES
-        (#{id}, '#{realName}', '#{ingame}', '#{region}', #{id})"
-        {:ok, %Xandra.Void{}} = Xandra.execute(conn, statement, _params = [])
+        (rlname, ingame, region, accountid) VALUES
+        ('#{realName}', '#{ingame}', '#{region}', :id)"
+        {:ok, %Xandra.Void{}} = Xandra.execute(conn, statement, %{
+          id: {"bigint", id}
+          })
       end
 
       # Check if match id exists
@@ -28,11 +30,14 @@ defmodule Queries do
         })
     end
 
-    # def updateMatchDetails(matchId, accountId) do
-    #
-    #   response |> Map.get("frames") |> List.first()
-    #
-    # end
+    def insertMap(map, prikey) do
+      {:ok, conn} = Helperfunction.connection()
+      statement = "UPDATE probuildstest.indivisualstats SET allitems = :items WHERE id = :prikey"
+      {:ok, %Xandra.Void{}} = Xandra.execute(conn, statement, %{
+        items: {"map<int, int>", map},
+        prikey: {"bigint", prikey}
+      })
+    end
 
     def insertMatchHistory(response) do
         {:ok, response } = response
@@ -41,24 +46,18 @@ defmodule Queries do
         partStats = response |> Map.get("participants")
         gameId = response |> Map.get("gameId")
         for x <- 0..9 do
-          statement = "INSERT INTO testStat (id, accountid, assists, championid, deaths, gold, keystone, kills, level, name, region, items, summoners, matchId) VALUES (:id, :accountId, :assist, :champId, :deaths, :gold, :keystone, :kills, :level, :name, :region, :items, :summoners, :match)"
+          prikey = "#{gameId}#{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("accountId")}" |> String.to_integer
+          statement = "INSERT INTO indivisualstats (id, accountid, assists, championid, deaths, gold, finalkeystone, kills, level, name, region, finalitems, summoner1, summoner2, matchId, participantId) VALUES (:prikey, #{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("accountId")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("assists")}, #{Enum.at(partStats, x) |> Map.get("championId")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("deaths")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("goldEarned")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("perk3Var1")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("kills")}, #{Enum.at(partStats, x) |> Map.get("stats") |> Map.get("champLevel")}, '#{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("summonerName")}', '#{Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("platformId")}', :items, :sum1, :sum2, :match, :partid)"
           {:ok, %Xandra.Void{}} = Xandra.execute(conn, statement, %{
-            id: {"bigint", :os.system_time(:micro_seconds)},
-            accountId: {"int", Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("accountId")},
-            assist: {"int", Enum.at(partStats, x) |> Map.get("stats") |> Map.get("assists")},
-            champId: {"int", Enum.at(partStats, x) |> Map.get("championId")},
-            deaths: {"int", Enum.at(partStats, x) |> Map.get("stats") |> Map.get("deaths")},
-            gold: {"int", Enum.at(partStats, x) |> Map.get("stats") |> Map.get("goldEarned")},
-            keystone: {"int", Enum.at(partStats, x) |> Map.get("stats") |> Map.get("perk3Var1")},
-            kills: {"int", Enum.at(partStats, x) |> Map.get("stats") |> Map.get("kills")},
-            level: {"int", Enum.at(partStats, x) |> Map.get("stats") |> Map.get("champLevel")},
-            name: {"text", Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("summonerName")},
-            region: {"text", Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("platformId")},
+            prikey: {"bigint", prikey},
+            match: {"bigint", gameId},
+            partid: {"int", Enum.at(partIdentities, x) |> Map.get("participantId")},
+            sum1: {"int", Enum.at(partStats, x) |> Map.get("spell1Id")},
+            sum2: {"int", Enum.at(partStats, x) |> Map.get("spell2Id")},
             items: {"list<int>", [Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item0"), Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item1"), Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item2"), Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item3"), Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item4"), Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item5"), Enum.at(partStats, x) |> Map.get("stats") |> Map.get("item6")]},
-            summoners: {"list<int>", [Enum.at(partStats, x) |> Map.get("spell1Id"), Enum.at(partStats, x) |> Map.get("spell2Id")]},
-            match: {"bigint", gameId}
+            win: {"int", Enum.at(partStats, x) |> Map.get("win")}
           })
-          Matches.detailsMatchHistory(gameId, {Enum.at(partIdentities, x) |> Map.get("player") |> Map.get("accountId")})
+          Matches.detailsMatchHistory(gameId, Enum.at(partIdentities, x) |> Map.get("participantId"), prikey)
 
         end
     end
